@@ -46,7 +46,7 @@ public class Functions
         var response = new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.OK,
-            Body = reqString,
+            Body = "this is actually generate data from AIs",
             Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
         };
 
