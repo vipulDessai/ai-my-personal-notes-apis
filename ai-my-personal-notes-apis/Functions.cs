@@ -13,31 +13,53 @@ using System.Text.Json;
 
 namespace ai_my_personal_notes_apis;
 
-//[BsonElement("PopulationAsOn")]
-//public DateTime? PopulationAsOn { get; set; }
-
-//[BsonRepresentation(BsonType.String)]
-//[BsonElement("CountryId")]
-//public int CountryId { get; set; }
-
-//[Required(AllowEmptyStrings = false)]
-//[StringLength(5)]
-//[BsonIgnoreIfDefault]
-//public virtual string CountryCode { get; set; }
-
-//[BsonIgnoreIfDefault]
-//public IList<States> States { get; set; }
-
-//[BsonExtraElements]
-//public BsonDocument ExtraElements { get; set; }
-class StoredSingleDbRecord
+public class Restaurant
 {
-    [BsonId]
-    public string id { get; set; }
+    public ObjectId Id { get; set; }
 
-    [BsonRepresentation(BsonType.String)]
-    [BsonElement("plot")]
-    public int plot { get; set; }
+    [BsonElement("name")]
+    public string Name { get; set; }
+
+    [BsonElement("restaurant_id")]
+    public string RestaurantId { get; set; }
+
+    [BsonElement("cuisine")]
+    public string Cuisine { get; set; }
+
+    [BsonElement("address")]
+    public Address Address { get; set; }
+
+    [BsonElement("borough")]
+    public string Borough { get; set; }
+
+    [BsonElement("grades")]
+    public List<GradeEntry> Grades { get; set; }
+}
+public class GradeEntry
+{
+    [BsonElement("date")]
+    public DateTime Date { get; set; }
+
+    [BsonElement("grade")]
+    public string Grade { get; set; }
+
+    [BsonElement("score")]
+    public float Score { get; set; }
+}
+
+public class Address
+{
+    [BsonElement("building")]
+    public string Building { get; set; }
+
+    [BsonElement("coord")]
+    public double[] Coordinates { get; set; }
+
+    [BsonElement("street")]
+    public string Street { get; set; }
+
+    [BsonElement("zipcode")]
+    public string ZipCode { get; set; }
 }
 
 public class Functions
@@ -79,15 +101,36 @@ public class Functions
         string reqString = JsonSerializer.Serialize(request);
 
         var client = CreateMongoClient();
-        var collection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("movies");
-        var filter = Builders<BsonDocument>.Filter.Eq("title", "Back to the Future");
-        var document = collection.Find(filter, new FindOptions() { BatchSize = 1000 }).First();
-        Console.WriteLine(document);
+        var _restaurantsCollection = client.GetDatabase("sample_restaurants").GetCollection<Restaurant>("restaurants");
+        var filter = Builders<Restaurant>.Filter.Eq("cuisine", "Pizza");
+        var findOptions = new FindOptions
+        {
+            BatchSize = 3
+        };
+
+        using (var cursor = _restaurantsCollection.Find(filter, findOptions).ToCursor())
+        {
+            cursor.MoveNext();
+            Console.WriteLine($"Number of documents in cursor: {cursor.Current.Count()}");
+
+            var d = cursor.ToList();
+
+            for (int i = 0; i < d.Count; i++)
+            {
+                Console.WriteLine(d[i].Name);
+            }
+        }
+
+        //var client = CreateMongoClient();
+        //var collection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("movies");
+        //var filter = Builders<Restaurant>.Filter.Eq("title", "Back to the Future");
+        //var document = collection.Find(filter, new FindOptions() { BatchSize = 1000 }).First();
+        //Console.WriteLine(document);
 
         var response = new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.OK,
-            Body = "this is actually generate data from AIs",
+            Body = "foo".ToString(),
             Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
         };
 
