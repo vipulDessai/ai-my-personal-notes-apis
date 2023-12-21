@@ -6,7 +6,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
 using System.Net;
-using System.Text.Json;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
@@ -78,7 +77,6 @@ public class Functions
         return new MongoClient(mongoClientSettings);
     }
 
-
     /// <summary>
     /// A Lambda function to respond to HTTP Get methods from API Gateway
     /// </summary>
@@ -96,10 +94,6 @@ public class Functions
     [RestApi(LambdaHttpMethod.Get, "/")]
     public APIGatewayProxyResponse Get(APIGatewayProxyRequest request, ILambdaContext context)
     {
-        context.Logger.LogInformation("Get Request\n");
-
-        string reqString = JsonSerializer.Serialize(request);
-
         var client = CreateMongoClient();
         var _restaurantsCollection = client.GetDatabase("sample_restaurants").GetCollection<Restaurant>("restaurants");
         var filter = Builders<Restaurant>.Filter.Eq("cuisine", "Pizza");
@@ -108,29 +102,24 @@ public class Functions
             BatchSize = 3
         };
 
+        var res = new List<string>();
         using (var cursor = _restaurantsCollection.Find(filter, findOptions).ToCursor())
         {
-            cursor.MoveNext();
-            Console.WriteLine($"Number of documents in cursor: {cursor.Current.Count()}");
-
-            var d = cursor.ToList();
-
-            for (int i = 0; i < d.Count; i++)
+            while (cursor.MoveNext())
             {
-                Console.WriteLine(d[i].Name);
+                var d = cursor.Current.ToList();
+
+                for (int i = 0; i < d.Count; i++)
+                {
+                    res.Add(d[i].Name);
+                }
             }
         }
-
-        //var client = CreateMongoClient();
-        //var collection = client.GetDatabase("sample_mflix").GetCollection<BsonDocument>("movies");
-        //var filter = Builders<Restaurant>.Filter.Eq("title", "Back to the Future");
-        //var document = collection.Find(filter, new FindOptions() { BatchSize = 1000 }).First();
-        //Console.WriteLine(document);
 
         var response = new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.OK,
-            Body = "foo".ToString(),
+            Body = string.Join(",", res),
             Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
         };
 
