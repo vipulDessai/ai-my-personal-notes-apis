@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text.Json;
 using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
@@ -5,10 +7,11 @@ using Amazon.Lambda.Core;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
-using System.Net;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
-[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
+[assembly: LambdaSerializer(
+    typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer)
+)]
 
 namespace ai_my_personal_notes_apis;
 
@@ -34,6 +37,7 @@ public class Restaurant
     [BsonElement("grades")]
     public List<GradeEntry> Grades { get; set; }
 }
+
 public class GradeEntry
 {
     [BsonElement("date")]
@@ -66,13 +70,13 @@ public class Functions
     /// <summary>
     /// Default constructor that Lambda will invoke.
     /// </summary>
-    public Functions()
-    {
-    }
+    public Functions() { }
 
     private static MongoClient CreateMongoClient()
     {
-        var mongoClientSettings = MongoClientSettings.FromConnectionString($"{Environment.GetEnvironmentVariable("MONGODB_URI")}");
+        var mongoClientSettings = MongoClientSettings.FromConnectionString(
+            $"{Environment.GetEnvironmentVariable("MONGODB_URI")}"
+        );
         mongoClientSettings.ServerApi = new ServerApi(ServerApiVersion.V1, strict: true);
         return new MongoClient(mongoClientSettings);
     }
@@ -90,22 +94,21 @@ public class Functions
     /// <returns>
     /// status of the data stored in the DB
     /// </returns>
-    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole", MemorySize = 256, Timeout = 30)]
+    [LambdaFunction(Policies = "AWSLambdaBasicExecutionRole", MemorySize = 256, Timeout = 120)]
     [RestApi(LambdaHttpMethod.Get, "/")]
     public APIGatewayProxyResponse Get(APIGatewayProxyRequest request, ILambdaContext context)
     {
         var client = CreateMongoClient();
-        var _restaurantsCollection = client.GetDatabase("sample_restaurants").GetCollection<Restaurant>("restaurants");
+        var _restaurantsCollection = client
+            .GetDatabase("sample_restaurants")
+            .GetCollection<Restaurant>("restaurants");
         var filter = Builders<Restaurant>.Filter.Eq("cuisine", "Pizza");
-        var findOptions = new FindOptions
-        {
-            BatchSize = 3
-        };
+        var findOptions = new FindOptions { BatchSize = 3 };
 
         var res = new List<string>();
         using (var cursor = _restaurantsCollection.Find(filter, findOptions).ToCursor())
         {
-            while (cursor.MoveNext())
+            if (cursor.MoveNext())
             {
                 var d = cursor.Current.ToList();
 
@@ -114,12 +117,17 @@ public class Functions
                     res.Add(d[i].Name);
                 }
             }
+
+            //while (cursor.MoveNext())
+            //{
+
+            //}
         }
 
         var response = new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.OK,
-            Body = string.Join(",", res),
+            Body = JsonSerializer.Serialize(res.ToArray()),
             Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
         };
 
