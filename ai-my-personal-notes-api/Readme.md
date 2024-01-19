@@ -52,11 +52,8 @@ query author {
 # TODO
 
 ## Graph QL setup
-- [Article 1](https://medium.com/@TimHolzherr/creating-a-graphql-backend-in-c-how-to-get-started-with-hot-chocolate-12-in-net-6-30f0fb177c5c)
-- [Article 2](https://www.c-sharpcorner.com/article/building-api-in-net-core-with-graphql2/)
-
-## Swagger
-- [Article 1](https://towardsaws.com/access-swagger-ui-in-aws-lambda-via-api-gateway-deployed-with-the-serverless-framework-d80268ef1d79)
+- [Article 1](https://medium.com/@TimHolzherr/creating-a-graphql-backend-in-c-how-to-get-started-with-hot-chocolate-12-in-net-6-30f0fb177c5c) - implementation in progress
+- [Article 2](https://www.c-sharpcorner.com/article/building-api-in-net-core-with-graphql2/) - for reference only
 
 # ASP.NET Core Web API Serverless Application
 - [Documentation](https://docs.aws.amazon.com/lambda/latest/dg/csharp-package-asp.html)
