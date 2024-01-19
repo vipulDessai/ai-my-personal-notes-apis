@@ -13,7 +13,7 @@ using MongoDB.Driver;
     typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer)
 )]
 
-namespace ai_my_personal_notes_apis;
+namespace Controllers.Bak;
 
 public class Restaurant
 {

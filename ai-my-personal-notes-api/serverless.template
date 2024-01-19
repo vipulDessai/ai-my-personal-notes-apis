@@ -35,7 +35,7 @@
         }
       }
     },
-    "aimypersonalnotesapisFunctionsGetGenerated": {
+    "ControllersBakFunctionsGetGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -52,7 +52,7 @@
           "AWSLambdaBasicExecutionRole"
         ],
         "PackageType": "Zip",
-        "Handler": "ai-my-personal-notes-api::ai_my_personal_notes_apis.Functions_Get_Generated::Get",
+        "Handler": "ai-my-personal-notes-api::Controllers.Bak.Functions_Get_Generated::Get",
         "Events": {
           "RootGet": {
             "Type": "Api",

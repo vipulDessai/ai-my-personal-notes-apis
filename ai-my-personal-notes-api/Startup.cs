@@ -13,6 +13,12 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
+
+        services
+            .AddSingleton<Repository>()
+            .AddGraphQLServer()
+            .AddQueryType<Query>()
+            .AddMutationType<Mutation>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -41,8 +47,8 @@ public class Startup
                     );
                 }
             );
-        });
 
-        app.UseGraphQLGraphiQL();
+            endpoints.MapGraphQL();
+        });
     }
 }

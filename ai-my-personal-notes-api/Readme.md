@@ -1,6 +1,52 @@
 # GraphQL server
 ```
-https://localhost:62926/ui/graphiql
+https://localhost:62926/graphql/
+```
+## sample query
+```
+# mutation
+mutation addAuthor {
+  addAuthor(input: {name: "Schiller"}) {
+    record {
+      id
+      name
+    }
+  }
+}
+
+mutation addBook {
+  addBook(input: {
+    author: "fadc4809-00d7-48dc-9b1b-51be8d768a6c",
+    title: "An die freude"
+  }) {
+    record {
+      id
+      title
+      author {
+        name
+      }
+    }
+  }
+}
+
+# query
+query books {
+  books {
+    id
+    author {
+      name
+    }
+  } 
+}
+
+query author {
+  author(input: {
+    authorId: "5944c03d-0f4d-4be7-8f6c-35cc7103c12f"
+  }) {
+    id
+    name
+  }
+}
 ```
 
 # TODO
