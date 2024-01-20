@@ -13,6 +13,17 @@ var app = builder.Build();
 
 app.UseRouting();
 
-app.UseEndpoints(endpoints => endpoints.MapGraphQL());
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet(
+        "/",
+        async context =>
+        {
+            await context.Response.WriteAsync("Welcome to running ASP.NET Core on AWS Lambda");
+        }
+    );
+
+    endpoints.MapGraphQL();
+});
 
 await app.RunAsync();
