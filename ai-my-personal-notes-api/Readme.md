@@ -1,7 +1,29 @@
+# Open dotnet aws project
+
+## installation
+```properties
+dotnet new tool-manifest
+dotnet tool install amazon.lambda.tools
+```
+
+## Deploy
+```properties
+dotnet lambda package -o dist/ai-my-personal-notes-api.zip
+
+npx serverless deploy
+```
+
+## test
+```properties
+curl "https://<YourUrl>/graphql?query=%7B+sysInfo+%7D"
+```
+
+
 # GraphQL server
 ```
 https://localhost:62926/graphql/
 ```
+
 ## sample query
 ```
 # mutation

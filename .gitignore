@@ -364,3 +364,8 @@ FodyWeavers.xsd
 
 # LaunchSetting.json
 launchSettings.json
+
+# misc
+.config
+.serverless
+dist

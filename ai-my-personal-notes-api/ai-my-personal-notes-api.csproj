@@ -15,6 +15,7 @@
     <PackageReference Include="Amazon.Lambda.Annotations" Version="1.1.0" />
     <PackageReference Include="Amazon.Lambda.APIGatewayEvents" Version="2.7.0" />
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="8.1.1" />
+    <PackageReference Include="Amazon.Lambda.AspNetCoreServer.Hosting" Version="1.6.1" />
     <PackageReference Include="CSharpier.MsBuild" Version="0.27.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -22,5 +23,10 @@
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.8.1" />
     <PackageReference Include="GraphQL" Version="7.7.2" />
     <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bootstrap">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

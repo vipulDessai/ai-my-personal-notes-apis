@@ -12,13 +12,15 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();
+        //services.AddControllers();
 
-        services
-            .AddSingleton<Repository>()
-            .AddGraphQLServer()
-            .AddQueryType<Query>()
-            .AddMutationType<Mutation>();
+        services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
+
+        //services
+        //    .AddSingleton<Repository>()
+        //    .AddGraphQLServer()
+        //    .AddQueryType<Query>()
+        //    .AddMutationType<Mutation>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -33,11 +35,11 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseAuthorization();
+        //app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            //endpoints.MapControllers();
             endpoints.MapGet(
                 "/",
                 async context =>

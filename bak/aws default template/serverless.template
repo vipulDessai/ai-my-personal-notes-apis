@@ -1,0 +1,28 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "aws serverless lambda template with graph ql This template is partially managed by Amazon.Lambda.Annotations (v1.0.0.0).",
+  "Parameters": {},
+  "Conditions": {},
+  "Resources": {
+    "AspNetCoreFunction": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "ai-my-personal-notes-api::ai_my_personal_notes_api.LambdaEntryPoint::FunctionHandlerAsync",
+        "Runtime": "dotnet6",
+        "CodeUri": "",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [
+          "AWSLambda_FullAccess"
+        ],
+        "Events": {
+          "ApiEvent": {
+            "Type": "HttpApi"
+          }
+        }
+      }
+    }
+  }
+}
