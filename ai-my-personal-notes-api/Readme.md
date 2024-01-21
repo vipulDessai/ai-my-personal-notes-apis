@@ -1,3 +1,14 @@
+# TODO
+- lambda authorizer
+    - use password hash (something like bcrypt js)
+- Setup git action pipeline for building and deploying the project
+    - using node and dotnet - [link](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net)
+- graphql for lambda
+    - [Link 1](https://dev.to/memark/running-a-graphql-api-in-net-6-on-aws-lambda-17oc)
+- Graph QL setup
+    - [Article 1](https://medium.com/@TimHolzherr/creating-a-graphql-backend-in-c-how-to-get-started-with-hot-chocolate-12-in-net-6-30f0fb177c5c) - implementation in progress
+    - [Article 2](https://www.c-sharpcorner.com/article/building-api-in-net-core-with-graphql2/) - for reference only
+
 # Open dotnet aws project
 
 ## installation
@@ -70,15 +81,6 @@ query author {
   }
 }
 ```
-
-# TODO
-
-## graphql for lambda
-- [Link 1](https://dev.to/memark/running-a-graphql-api-in-net-6-on-aws-lambda-17oc)
-
-## Graph QL setup
-- [Article 1](https://medium.com/@TimHolzherr/creating-a-graphql-backend-in-c-how-to-get-started-with-hot-chocolate-12-in-net-6-30f0fb177c5c) - implementation in progress
-- [Article 2](https://www.c-sharpcorner.com/article/building-api-in-net-core-with-graphql2/) - for reference only
 
 # ASP.NET Core Web API Serverless Application
 - [Documentation](https://docs.aws.amazon.com/lambda/latest/dg/csharp-package-asp.html)

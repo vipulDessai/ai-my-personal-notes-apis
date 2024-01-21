@@ -7,14 +7,19 @@ builder
     .AddQueryType<Query>()
     .AddMutationType<Mutation>();
 
+builder.Services.AddControllers();
+
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
 var app = builder.Build();
 
 app.UseRouting();
 
+app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapControllers();
     endpoints.MapGet(
         "/",
         async context =>
