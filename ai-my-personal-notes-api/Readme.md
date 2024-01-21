@@ -1,4 +1,7 @@
 # TODO
+- enable cors
+    - [serverless httpapi config](https://www.serverless.com/framework/docs/providers/aws/events/http-api)
+    - [stack overflow issue cors](https://stackoverflow.com/questions/66000642/httpapi-serverless-framework-api-gateway-cors-not-working)
 - lambda authorizer
     - use password hash (something like bcrypt js)
 - Setup git action pipeline for building and deploying the project
