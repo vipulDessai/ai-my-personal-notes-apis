@@ -1,5 +1,8 @@
-﻿public class Mutation
+﻿using HotChocolate.Authorization;
+
+public class Mutation
 {
+    [Authorize(Policy = "Librarian")]
     public async Task<AuthorPayload> AddAuthor(AuthorInput input, [Service] Repository repository)
     {
         var author = new Author(Guid.NewGuid(), input.name);
@@ -24,3 +27,5 @@ public record BookInput(string title, Guid author);
 public record AuthorPayload(Author record);
 
 public record AuthorInput(string name);
+
+public record Payload(string? Error);

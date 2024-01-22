@@ -2,6 +2,10 @@
 - enable cors
     - [serverless httpapi config](https://www.serverless.com/framework/docs/providers/aws/events/http-api)
     - [stack overflow issue cors](https://stackoverflow.com/questions/66000642/httpapi-serverless-framework-api-gateway-cors-not-working)
+    - [AWS cors note](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-cors.html)
+- serverless.yml
+    - configs
+        - [multiple httpApi route configs](https://forum.serverless.com/t/multiple-request-methods-for-a-single-httpapi-route/15721/5)
 - lambda authorizer
     - use password hash (something like bcrypt js)
 - Setup git action pipeline for building and deploying the project
@@ -18,6 +22,11 @@
 ```properties
 dotnet new tool-manifest
 dotnet tool install amazon.lambda.tools
+```
+
+### General installation of packages
+```c#
+dotnet add package HotChocolate.AspNetCore.Authorization
 ```
 
 ## Deploy

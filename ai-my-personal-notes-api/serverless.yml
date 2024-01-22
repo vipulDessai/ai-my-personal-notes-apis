@@ -5,16 +5,6 @@ provider:
   region: us-east-1
   httpApi:
     payload: "2.0"
-    cors:
-      allowedOrigins:
-        - 'https://ai-my-personal-notes-ui.vercel.app'
-        - 'http://localhost:3000'
-      allowedMethods:
-        - GET
-        - OPTIONS
-        - POST
-        - PUT
-        - DELETE
   lambdaHashingVersion: 20201221
 
 functions:
@@ -25,4 +15,4 @@ functions:
       individually: true
     handler: required-but-ignored
     events:
-      - httpApi: "*"
+      - httpApi: '*'

@@ -22,6 +22,7 @@
     </PackageReference>
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.8.1" />
     <PackageReference Include="GraphQL" Version="7.7.2" />
+    <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.8.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
   </ItemGroup>
   <ItemGroup>
