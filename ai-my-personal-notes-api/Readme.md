@@ -13,6 +13,8 @@
       - [stack overflow](https://stackoverflow.com/questions/53413527/is-there-a-google-authenticator-api)
 - Setup git action pipeline for building and deploying the project
     - using node and dotnet - [link](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net)
+    - setup pre commit
+    - git hooks
 - graphql for lambda
     - [Link 1](https://dev.to/memark/running-a-graphql-api-in-net-6-on-aws-lambda-17oc)
 - Graph QL setup
