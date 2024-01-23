@@ -1,13 +1,16 @@
 # TODO
-- enable cors
+- enable cors - currently enabled from API server directly
     - [serverless httpapi config](https://www.serverless.com/framework/docs/providers/aws/events/http-api)
     - [stack overflow issue cors](https://stackoverflow.com/questions/66000642/httpapi-serverless-framework-api-gateway-cors-not-working)
     - [AWS cors note](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-cors.html)
-- serverless.yml
+- serverless.yml setup
     - configs
         - [multiple httpApi route configs](https://forum.serverless.com/t/multiple-request-methods-for-a-single-httpapi-route/15721/5)
-- lambda authorizer
+- secure api
     - use password hash (something like bcrypt js)
+    - use TOTP 
+      - [tutorial link](https://medium.com/techvraksh/setup-2fa-using-totp-in-your-app-347e8ff7ad4d)
+      - [stack overflow](https://stackoverflow.com/questions/53413527/is-there-a-google-authenticator-api)
 - Setup git action pipeline for building and deploying the project
     - using node and dotnet - [link](https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net)
 - graphql for lambda

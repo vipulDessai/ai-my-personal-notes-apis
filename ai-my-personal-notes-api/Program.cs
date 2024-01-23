@@ -30,6 +30,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
+builder.WebHost.UseUrls("https://localhost:8081;http://localhost:8080");
+
 var app = builder.Build();
 
 app.UseRouting();
