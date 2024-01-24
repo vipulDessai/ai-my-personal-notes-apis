@@ -1,4 +1,5 @@
 # TODO
+- [authentication tutorial](https://medium.com/@marcinjaniak/graphql-simple-authorization-and-authentication-with-hotchocolate-11-and-asp-net-core-3-162e0a35743d)
 - enable cors - currently enabled from API server directly
     - [serverless httpapi config](https://www.serverless.com/framework/docs/providers/aws/events/http-api)
     - [stack overflow issue cors](https://stackoverflow.com/questions/66000642/httpapi-serverless-framework-api-gateway-cors-not-working)

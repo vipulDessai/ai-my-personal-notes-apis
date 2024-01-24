@@ -1,14 +1,20 @@
 // Program.cs
+using System.Text;
+using GraphQLAuthDemo;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseUrls("https://localhost:8081;http://localhost:8080");
 
 builder
     .Services.AddSingleton<Repository>()
-    .AddAuthentication()
-    .Services.AddAuthorization(o => o.AddPolicy("Librarian", p => p.RequireAssertion(_ => true)))
     .AddGraphQLServer()
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
-    .AddAuthorization();
+    .AddAuthorization()
+    .AddHttpRequestInterceptor<HttpRequestInterceptor>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
@@ -30,13 +36,44 @@ builder.Services.AddControllers();
 
 builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 
-builder.WebHost.UseUrls("https://localhost:8081;http://localhost:8080");
+builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddHttpContextAccessor();
+
+builder
+    .Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateIssuerSigningKey = true,
+            ValidAudience = "audience",
+            ValidIssuer = "issuer",
+            RequireSignedTokens = false,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes("secretsecretsecret")
+            )
+        };
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+    });
+
+//builder.Services.AddAuthorization(x =>
+//{
+//    x.AddPolicy("hr-department", builder => builder.RequireAuthenticatedUser().RequireRole("hr"));
+//    x.AddPolicy("DevDepartment", builder => builder.RequireRole("dev"));
+//});
 
 var app = builder.Build();
 
 app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
-app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
@@ -51,5 +88,7 @@ app.UseEndpoints(endpoints =>
 
     endpoints.MapGraphQL();
 });
+
+app.UseAuthentication();
 
 await app.RunAsync();

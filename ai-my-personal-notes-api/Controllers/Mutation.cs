@@ -1,8 +1,20 @@
-﻿using HotChocolate.Authorization;
+﻿using GraphQLAuthDemo;
+using HotChocolate.Authorization;
 
 public class Mutation
 {
-    [Authorize(Policy = "Librarian")]
+    public async Task<string> GetToken(
+        string email,
+        string password,
+        [Service] IIdentityService identityService
+    )
+    {
+        var s = await identityService.Authenticate(email, password);
+
+        return s;
+    }
+
+    [Authorize]
     public async Task<AuthorPayload> AddAuthor(AuthorInput input, [Service] Repository repository)
     {
         var author = new Author(Guid.NewGuid(), input.name);
