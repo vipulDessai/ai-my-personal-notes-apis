@@ -80,9 +80,9 @@ namespace GraphQLAuthDemo
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-            }
 
-            return "jwt creation failed";
+                return "jwt creation failed";
+            }
         }
     }
 }

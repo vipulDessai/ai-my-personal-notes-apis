@@ -1,6 +1,8 @@
 ﻿using GraphQLAuthDemo;
 using HotChocolate.Authorization;
 
+namespace ai_my_personal_notes_api;
+
 public class Mutation
 {
     public async Task<string> GetToken(
@@ -9,9 +11,7 @@ public class Mutation
         [Service] IIdentityService identityService
     )
     {
-        var s = await identityService.Authenticate(email, password);
-
-        return s;
+        return await identityService.Authenticate(email, password);
     }
 
     [Authorize]
@@ -31,13 +31,3 @@ public class Mutation
         return new BookPayload(book);
     }
 }
-
-public record BookPayload(Book? record, string? error = null);
-
-public record BookInput(string title, Guid author);
-
-public record AuthorPayload(Author record);
-
-public record AuthorInput(string name);
-
-public record Payload(string? Error);

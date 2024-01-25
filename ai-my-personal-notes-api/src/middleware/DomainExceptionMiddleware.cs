@@ -1,5 +1,9 @@
 ﻿using HotChocolate.Resolvers;
 
+namespace ai_my_personal_notes_api;
+
+public record Payload(string? Error);
+
 public class DomainExceptionMiddleware
 {
     private readonly FieldDelegate _next;

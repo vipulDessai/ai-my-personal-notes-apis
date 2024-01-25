@@ -25,5 +25,3 @@
         return Task.CompletedTask;
     }
 }
-
-public record GetAuthorInput(Guid authorId);

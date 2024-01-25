@@ -1,5 +1,5 @@
-// Program.cs
 using System.Text;
+using ai_my_personal_notes_api;
 using GraphQLAuthDemo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
