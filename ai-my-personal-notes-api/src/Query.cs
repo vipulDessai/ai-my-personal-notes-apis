@@ -1,10 +1,10 @@
-﻿using ai_my_personal_notes_api.Models;
+﻿using System.Net;
+using System.Text.Json;
+using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
 using Amazon.Lambda.APIGatewayEvents;
 using HotChocolate.Authorization;
 using MongoDB.Driver;
-using System.Net;
-using System.Text.Json;
 
 namespace ai_my_personal_notes_api;
 
