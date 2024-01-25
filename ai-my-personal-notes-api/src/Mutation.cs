@@ -1,4 +1,9 @@
-﻿using GraphQLAuthDemo;
+﻿using System.Net;
+using System.Text.Json;
+using ai_my_personal_notes_api.Models;
+using ai_my_personal_notes_api.services;
+using Amazon.Lambda.APIGatewayEvents;
+using GraphQLAuthDemo;
 using HotChocolate.Authorization;
 
 namespace ai_my_personal_notes_api;
@@ -29,5 +34,26 @@ public class Mutation
         var book = new Book(Guid.NewGuid(), input.title, author);
         await repository.AddBook(book);
         return new BookPayload(book);
+    }
+
+    public async Task<APIGatewayProxyResponse> AddNote(
+        [GlobalState("currentUser")] CurrentUser user,
+        AddNotesReqInput input
+    )
+    {
+        var db = new MongoDb();
+        var globalCollection = db.client.GetDatabase("db").GetCollection<NoteSchema>("collection");
+
+        var note = input.note;
+        globalCollection.InsertOne(note);
+
+        var response = new APIGatewayProxyResponse
+        {
+            StatusCode = (int)HttpStatusCode.OK,
+            Body = JsonSerializer.Serialize("Note Inserted"),
+            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
+        };
+
+        return response;
     }
 }

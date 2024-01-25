@@ -1,10 +1,10 @@
-﻿using System.Net;
-using System.Text.Json;
-using ai_my_personal_notes_api.Models;
+﻿using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
 using Amazon.Lambda.APIGatewayEvents;
 using HotChocolate.Authorization;
 using MongoDB.Driver;
+using System.Net;
+using System.Text.Json;
 
 namespace ai_my_personal_notes_api;
 
@@ -31,6 +31,51 @@ public class Query
                 for (int i = 0; i < d.Count; i++)
                 {
                     res.Add(d[i].Name);
+                }
+            }
+        }
+
+        var response = new APIGatewayProxyResponse
+        {
+            StatusCode = (int)HttpStatusCode.OK,
+            Body = JsonSerializer.Serialize(res.ToArray()),
+            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
+        };
+
+        return response;
+    }
+
+    public async Task<APIGatewayProxyResponse> GetNotes(
+        [GlobalState("currentUser")] CurrentUser user,
+        GetNotesReqInput input
+    )
+    {
+        var db = new MongoDb();
+        var _globalCollection = db.client.GetDatabase("db").GetCollection<NoteSchema>("collection");
+
+        var (BatchSize, FilterKey, FilterValue) = input;
+
+        FilterDefinition<NoteSchema> filter;
+        if (string.IsNullOrEmpty(FilterKey))
+        {
+            filter = Builders<NoteSchema>.Filter.Empty;
+        }
+        else
+        {
+            filter = Builders<NoteSchema>.Filter.Eq(FilterKey, FilterValue);
+        }
+        var findOptions = new FindOptions { BatchSize = BatchSize };
+
+        var res = new List<NoteSchema>();
+        using (var cursor = _globalCollection.Find(filter, findOptions).ToCursor())
+        {
+            if (cursor.MoveNext())
+            {
+                var d = cursor.Current.ToList();
+
+                for (int i = 0; i < d.Count; i++)
+                {
+                    res.Add(d[i]);
                 }
             }
         }
