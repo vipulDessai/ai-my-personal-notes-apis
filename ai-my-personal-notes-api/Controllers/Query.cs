@@ -7,7 +7,7 @@ public class Query
         return "unauthorized";
     }
 
-    [Authorize]
+    [Authorize(Policy = "hr")]
     public List<string> Authorized([Service] IHttpContextAccessor contextAccessor)
     {
         var res = contextAccessor
@@ -17,7 +17,7 @@ public class Query
         return res;
     }
 
-    [Authorize]
+    [Authorize(Policy = "hr")]
     public List<string> AuthorizedBetterWay([GlobalState("currentUser")] CurrentUser user)
     {
         return user.Claims;

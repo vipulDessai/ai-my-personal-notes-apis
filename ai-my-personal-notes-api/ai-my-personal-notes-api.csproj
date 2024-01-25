@@ -24,7 +24,6 @@
     <PackageReference Include="GraphQL" Version="7.7.2" />
     <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.8.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.4" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.2.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
   </ItemGroup>
   <ItemGroup>

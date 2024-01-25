@@ -1,17 +1,33 @@
 ﻿using HotChocolate.AspNetCore;
 using HotChocolate.Execution;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
 
 public class HttpRequestInterceptor : DefaultHttpRequestInterceptor
 {
-    public override ValueTask OnCreateAsync(
+    private readonly IPolicyEvaluator _policyEvaluator;
+    private readonly IAuthorizationPolicyProvider _policyProvider;
+
+    public HttpRequestInterceptor(
+        IPolicyEvaluator policyEvaluator,
+        IAuthorizationPolicyProvider policyProvider
+    )
+    {
+        _policyEvaluator = policyEvaluator;
+        _policyProvider = policyProvider;
+    }
+
+    public override async ValueTask OnCreateAsync(
         HttpContext context,
         IRequestExecutor requestExecutor,
         IQueryRequestBuilder requestBuilder,
         CancellationToken cancellationToken
     )
     {
-        var user = context.User;
-
-        return base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
+        await _policyEvaluator.AuthenticateAsync(
+            await _policyProvider.GetDefaultPolicyAsync(),
+            context
+        );
+        await base.OnCreateAsync(context, requestExecutor, requestBuilder, cancellationToken);
     }
 }
