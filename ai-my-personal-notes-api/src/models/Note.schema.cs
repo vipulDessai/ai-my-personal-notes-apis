@@ -26,8 +26,8 @@ public class NoteSchema
     [BsonElement("tags")]
     public List<string> Tags { get; set; }
 
-    //[BsonElement("date")]
-    //public DateTime Date { get; set; }
+    [BsonElement("date")]
+    public DateTime Date { get; set; }
 
     [BsonElement("input_data")]
     public NoteInputs InputData { get; set; }
