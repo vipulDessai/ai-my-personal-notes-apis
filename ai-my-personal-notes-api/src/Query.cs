@@ -15,9 +15,10 @@ public class Query
         GetRestuarantsInput input
     )
     {
-        var db = new MongoDb();
-        var _restaurantsCollection = db.client.GetDatabase("sample_restaurants")
-            .GetCollection<Restaurant>("restaurants");
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("sample_restaurants");
+        var globalCollection = db.GetCollection<NoteSchema>("collection");
+        var _restaurantsCollection = db.GetCollection<Restaurant>("restaurants");
         var filter = Builders<Restaurant>.Filter.Eq(input.FilterKey, input.FilterValue);
         var findOptions = new FindOptions { BatchSize = input.BatchSize };
 
@@ -50,8 +51,9 @@ public class Query
         GetNotesReqInput input
     )
     {
-        var db = new MongoDb();
-        var _globalCollection = db.client.GetDatabase("db").GetCollection<NoteSchema>("collection");
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("db");
+        var _globalCollection = db.GetCollection<NoteSchema>("collection");
 
         var (BatchSize, FilterKey, FilterValue) = input;
 

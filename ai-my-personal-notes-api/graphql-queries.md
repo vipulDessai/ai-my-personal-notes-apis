@@ -1,14 +1,9 @@
-
-
+# mutations
 mutation getTokenMutation {
   token(
     email: "hrleader@example.com", 
     password: "nevermind, this backend doesn't care for password"
   )
-}
-
-query authorize {
-  unauthorized
 }
 
 query getRestuarants {
@@ -26,14 +21,22 @@ mutation addNote {
   addNote (input: {
     note: {
       inputData: {
-        value: "some note 2",
+        value: "",
         childInputs: [],
         tags: []
       },
-      tags: ["t1", "t2"],
-      title: "this is a test note",
-      date: "2023-08-24T00:00:00"
+      tags: ["pakistan", "politics"],
+      title: "pakistan election - people protest for jailed imran khan",
+      date: "2024-02-11T00:00:00"
     }
+    newTags: [
+      {
+        name: "pakistan"
+      },
+      {
+        name: "politics"
+      }
+    ]
   }) {
     statusCode
     body

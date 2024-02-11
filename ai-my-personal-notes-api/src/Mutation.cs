@@ -5,6 +5,7 @@ using ai_my_personal_notes_api.services;
 using Amazon.Lambda.APIGatewayEvents;
 using GraphQLAuthDemo;
 using HotChocolate.Authorization;
+using MongoDB.Driver;
 
 namespace ai_my_personal_notes_api;
 
@@ -41,10 +42,54 @@ public class Mutation
         AddNotesReqInput input
     )
     {
-        var db = new MongoDb();
-        var globalCollection = db.client.GetDatabase("db").GetCollection<NoteSchema>("collection");
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("db");
+        var globalCollection = db.GetCollection<NoteSchema>("collection");
 
-        var note = input.note;
+        var (note, newTags) = input;
+        if (newTags.Length > 0)
+        {
+            var tagsCollection = db.GetCollection<NoteTags>("tags");
+            tagsCollection.InsertMany(newTags);
+
+            var findOptions = new FindOptions { BatchSize = newTags.Length };
+
+            var tagsName = newTags.Select(tag => tag.Name);
+            var filter = Builders<NoteTags>.Filter.In("name", tagsName);
+
+            var tagsIdsRes = new List<NoteTags>();
+            using (var c = tagsCollection.Find(filter, findOptions).ToCursor())
+            {
+                if (c.MoveNext())
+                {
+                    var d = c.Current.ToList();
+
+                    for (int i = 0; i < d.Count; i++)
+                    {
+                        tagsIdsRes.Add(d[i]);
+                    }
+                }
+
+                // TODO: recursively replace the tags value for the
+                // child input fields as well
+                void recursivelyReplaceTagsWithIds()
+                {
+                    foreach (var t in tagsIdsRes)
+                    {
+                        for (int i = 0; i < note.Tags.Count; i++)
+                        {
+                            if (note.Tags[i] == t.Name)
+                            {
+                                note.Tags[i] = t.Id.ToString();
+                            }
+                        }
+                    }
+                }
+
+                recursivelyReplaceTagsWithIds();
+            }
+        }
+
         globalCollection.InsertOne(note);
 
         var response = new APIGatewayProxyResponse

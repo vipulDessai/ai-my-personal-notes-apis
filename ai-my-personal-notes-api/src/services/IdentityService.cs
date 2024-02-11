@@ -51,7 +51,11 @@ namespace GraphQLAuthDemo
         {
             try
             {
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("secretsecretsecret"));
+                var key = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(
+                        $"{Environment.GetEnvironmentVariable("IDENTITY_SERVER_SECRET")}"
+                    )
+                );
 
                 var claims = new List<Claim>
                 {

@@ -30,7 +30,9 @@ builder
             ValidIssuer = "issuer",
             RequireSignedTokens = false,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("secretsecretsecret")
+                Encoding.UTF8.GetBytes(
+                    $"{Environment.GetEnvironmentVariable("IDENTITY_SERVER_SECRET")}"
+                )
             )
         };
         options.RequireHttpsMetadata = false;

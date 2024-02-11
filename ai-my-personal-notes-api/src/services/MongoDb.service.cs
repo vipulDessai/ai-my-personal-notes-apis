@@ -2,11 +2,11 @@
 
 namespace ai_my_personal_notes_api.services
 {
-    public class MongoDb
+    public class MongoDbServer
     {
         public MongoClient client;
 
-        public MongoDb()
+        public MongoDbServer()
         {
             var mongoClientSettings = MongoClientSettings.FromConnectionString(
                 $"{Environment.GetEnvironmentVariable("MONGODB_URI")}"

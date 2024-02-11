@@ -33,6 +33,15 @@ public class NoteSchema
     public NoteInputs InputData { get; set; }
 }
 
-public record AddNotesReqInput(NoteSchema note);
+public class NoteTags
+{
+    [GraphQLIgnore]
+    public ObjectId Id { get; set; }
+
+    [BsonElement("name")]
+    public string Name { get; set; }
+}
+
+public record AddNotesReqInput(NoteSchema note, NoteTags[] newTags);
 
 public record GetNotesReqInput(int BatchSize, string? FilterKey, string? FilterValue);
