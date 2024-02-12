@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using ai_my_personal_notes_api.Common;
 using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
 using Amazon.Lambda.APIGatewayEvents;
@@ -37,6 +38,7 @@ public class Mutation
         return new BookPayload(book);
     }
 
+    [Authorize]
     public async Task<APIGatewayProxyResponse> AddNote(
         [GlobalState("currentUser")] CurrentUser user,
         AddNotesReqInput input
@@ -50,7 +52,7 @@ public class Mutation
         if (newTags.Length > 0)
         {
             var tagsCollection = db.GetCollection<NoteTags>("tags");
-            tagsCollection.InsertMany(newTags);
+            await tagsCollection.InsertManyAsync(newTags);
 
             var findOptions = new FindOptions { BatchSize = newTags.Length };
 
@@ -70,35 +72,71 @@ public class Mutation
                     }
                 }
 
-                // TODO: recursively replace the tags value for the
-                // child input fields as well
-                void recursivelyReplaceTagsWithIds()
+                void replaceTags(List<string> curTags)
                 {
                     foreach (var t in tagsIdsRes)
                     {
-                        for (int i = 0; i < note.Tags.Count; i++)
+                        for (int i = 0; i < curTags.Count; i++)
                         {
-                            if (note.Tags[i] == t.Name)
+                            if (curTags[i] == t.Name)
                             {
-                                note.Tags[i] = t.Id.ToString();
+                                curTags[i] = t.Id.ToString();
                             }
                         }
                     }
                 }
 
-                recursivelyReplaceTagsWithIds();
+                replaceTags(note.Tags);
+
+                // TODO: recursively replace the tags value for the
+                // child input fields as well
+                void recursivelyReplaceTagsWithIds(NoteInputs[] curNoteInputs)
+                {
+                    for (int i = 0; i < curNoteInputs.Length; ++i)
+                    {
+                        var curNoteInput = curNoteInputs[i];
+                        replaceTags(curNoteInput.Tags);
+
+                        if (curNoteInput.ChildInputs.Length > 0)
+                        {
+                            recursivelyReplaceTagsWithIds(curNoteInput.ChildInputs);
+                        }
+                    }
+                }
+
+                recursivelyReplaceTagsWithIds(note.InputData);
             }
         }
 
-        globalCollection.InsertOne(note);
+        await globalCollection.InsertOneAsync(note);
 
         var response = new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.OK,
             Body = JsonSerializer.Serialize("Note Inserted"),
-            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
+            Headers = Constants.Headers,
         };
 
         return response;
+    }
+
+    [Authorize]
+    public async Task<APIGatewayProxyResponse> DeleteTags(
+        [GlobalState("currentUser")] CurrentUser user,
+        List<string> tags
+    )
+    {
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("db");
+        var tagsCollection = db.GetCollection<NoteTags>("tags");
+        var filter = Builders<NoteTags>.Filter.In("name", tags);
+        var res = await tagsCollection.DeleteManyAsync(filter);
+
+        return new APIGatewayProxyResponse
+        {
+            StatusCode = (int)HttpStatusCode.OK,
+            Body = JsonSerializer.Serialize(res),
+            Headers = Constants.Headers,
+        };
     }
 }

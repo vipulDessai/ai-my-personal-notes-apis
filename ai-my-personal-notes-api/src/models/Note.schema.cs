@@ -30,7 +30,7 @@ public class NoteSchema
     public DateTime Date { get; set; }
 
     [BsonElement("input_data")]
-    public NoteInputs InputData { get; set; }
+    public NoteInputs[] InputData { get; set; }
 }
 
 public class NoteTags
