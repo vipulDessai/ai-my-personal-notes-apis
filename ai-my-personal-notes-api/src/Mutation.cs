@@ -88,8 +88,6 @@ public class Mutation
 
                 replaceTags(note.Tags);
 
-                // TODO: recursively replace the tags value for the
-                // child input fields as well
                 void recursivelyReplaceTagsWithIds(NoteInputs[] curNoteInputs)
                 {
                     for (int i = 0; i < curNoteInputs.Length; ++i)

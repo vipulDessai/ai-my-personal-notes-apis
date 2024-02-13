@@ -45,3 +45,5 @@ public class NoteTags
 public record AddNotesReqInput(NoteSchema note, NoteTags[] newTags);
 
 public record GetNotesReqInput(int BatchSize, string? FilterKey, string? FilterValue);
+
+public record GetTagsReqInput(int BatchSize, string[]? TagsIds, string[]? TagsName);
