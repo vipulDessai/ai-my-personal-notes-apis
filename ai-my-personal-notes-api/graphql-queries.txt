@@ -6,17 +6,6 @@ mutation getTokenMutation {
   )
 }
 
-query getRestuarants {
-  restuarants (input: {
-    batchSize: 10,
-    filterKey: "cuisine",
-    filterValue: "American",
-  }) {
-    body
-    statusCode
-  }
-}
-
 mutation addNote {
   addNote (input: {
     note: {
@@ -51,32 +40,6 @@ query getNote {
     body
   }
 }
-
-mutation addAuthor {
-  addAuthor(input: {name: "Schiller"}) {
-    record {
-      id
-      name
-    }
-  }
-}
-
-mutation addBook {
-  addBook(input: {
-    author: "7cbfd65e-3e57-4e1c-b7f1-e09b49a50ae0",
-    title: "An die freude"
-  }) {
-    record {
-      id
-      title
-      author {
-        name
-      }
-    }
-  }
-}
-
-
 
 # query
 query books {
