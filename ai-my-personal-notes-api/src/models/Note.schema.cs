@@ -18,6 +18,7 @@ public class NoteInputs
 public class NoteSchema
 {
     [GraphQLIgnore]
+    [BsonId]
     public ObjectId Id { get; set; }
 
     [BsonElement("title")]
@@ -36,6 +37,7 @@ public class NoteSchema
 public class NoteTags
 {
     [GraphQLIgnore]
+    [BsonId]
     public ObjectId Id { get; set; }
 
     [BsonElement("name")]

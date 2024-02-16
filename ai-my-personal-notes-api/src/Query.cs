@@ -5,6 +5,7 @@ using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
 using Amazon.Lambda.APIGatewayEvents;
 using HotChocolate.Authorization;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace ai_my_personal_notes_api;
@@ -66,12 +67,13 @@ public class Query
 
         var (BatchSize, TagsIds, TagsName) = input;
         var findOptions = new FindOptions { BatchSize = BatchSize };
-
-        // TODO: find by ID is not working - fix it
         FilterDefinition<NoteTags> filter;
         if (TagsIds != null && TagsIds.Length > 0)
         {
-            filter = Builders<NoteTags>.Filter.In("id", TagsIds);
+            filter = Builders<NoteTags>.Filter.In(
+                "_id",
+                TagsIds.Select(tag => ObjectId.Parse(tag))
+            );
         }
         else
         {
