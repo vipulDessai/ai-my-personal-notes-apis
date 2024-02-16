@@ -1,9 +1,5 @@
-﻿using System.Net;
-using System.Text.Json;
-using ai_my_personal_notes_api.Common;
-using ai_my_personal_notes_api.Models;
+﻿using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
-using Amazon.Lambda.APIGatewayEvents;
 using HotChocolate.Authorization;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,7 +9,7 @@ namespace ai_my_personal_notes_api;
 public class Query
 {
     [Authorize]
-    public async Task<APIGatewayProxyResponse> GetNotes(
+    public Task<GetNotesOutput> GetNotes(
         [GlobalState("currentUser")] CurrentUser user,
         GetNotesReqInput input
     )
@@ -49,17 +45,10 @@ public class Query
             }
         }
 
-        var response = new APIGatewayProxyResponse
-        {
-            StatusCode = (int)HttpStatusCode.OK,
-            Body = JsonSerializer.Serialize(res.ToArray()),
-            Headers = Constants.Headers,
-        };
-
-        return response;
+        return Task.FromResult(new GetNotesOutput { Notes = res });
     }
 
-    public Task<APIGatewayProxyResponse> GetTags(GetTagsReqInput input)
+    public Task<GetTagsOutput> GetTags(GetTagsReqInput input)
     {
         var dbServer = new MongoDbServer();
         var db = dbServer.client.GetDatabase("db");
@@ -94,13 +83,6 @@ public class Query
             }
         }
 
-        var result = new APIGatewayProxyResponse
-        {
-            StatusCode = (int)HttpStatusCode.OK,
-            Body = JsonSerializer.Serialize(res),
-            Headers = Constants.Headers,
-        };
-
-        return Task.FromResult(result);
+        return Task.FromResult(new GetTagsOutput { Tags = res });
     }
 }

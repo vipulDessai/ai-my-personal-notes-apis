@@ -1,9 +1,5 @@
-﻿using System.Net;
-using System.Text.Json;
-using ai_my_personal_notes_api.Common;
-using ai_my_personal_notes_api.Models;
+﻿using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
-using Amazon.Lambda.APIGatewayEvents;
 using GraphQLAuthDemo;
 using HotChocolate.Authorization;
 using MongoDB.Driver;
@@ -22,7 +18,7 @@ public class Mutation
     }
 
     [Authorize]
-    public async Task<APIGatewayProxyResponse> AddNote(
+    public async Task<AddNoteOutput> AddNote(
         [GlobalState("currentUser")] CurrentUser user,
         AddNotesReqInput input
     )
@@ -91,18 +87,11 @@ public class Mutation
 
         await globalCollection.InsertOneAsync(note);
 
-        var response = new APIGatewayProxyResponse
-        {
-            StatusCode = (int)HttpStatusCode.OK,
-            Body = JsonSerializer.Serialize("Note Inserted"),
-            Headers = Constants.Headers,
-        };
-
-        return response;
+        return new AddNoteOutput { Message = "Note Inserted" };
     }
 
     [Authorize]
-    public async Task<APIGatewayProxyResponse> DeleteTags(
+    public async Task<DeleteTagOutput> DeleteTags(
         [GlobalState("currentUser")] CurrentUser user,
         List<string> tags
     )
@@ -113,11 +102,6 @@ public class Mutation
         var filter = Builders<NoteTags>.Filter.In("name", tags);
         var res = await tagsCollection.DeleteManyAsync(filter);
 
-        return new APIGatewayProxyResponse
-        {
-            StatusCode = (int)HttpStatusCode.OK,
-            Body = JsonSerializer.Serialize(res),
-            Headers = Constants.Headers,
-        };
+        return new DeleteTagOutput { Data = res, Message = "Delete operation completed", };
     }
 }
