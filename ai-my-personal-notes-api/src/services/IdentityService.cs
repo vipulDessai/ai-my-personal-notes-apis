@@ -13,7 +13,7 @@ namespace GraphQLAuthDemo
 
     public class IdentityService : IIdentityService
     {
-        public async Task<string> Authenticate(string email, string password)
+        public Task<string> Authenticate(string email, string password)
         {
             //Your custom logic here (e.g. database query)
             //Mocked for a sake of simplicity
@@ -41,7 +41,8 @@ namespace GraphQLAuthDemo
 
             if (roles.Count > 0)
             {
-                return GenerateAccessToken(email, Guid.NewGuid().ToString(), roles.ToArray());
+                var token = GenerateAccessToken(email, Guid.NewGuid().ToString(), roles.ToArray());
+                return Task.FromResult(token);
             }
 
             throw new AuthenticationException();

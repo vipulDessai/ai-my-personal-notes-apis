@@ -52,6 +52,7 @@ public class Query
         return Task.FromResult(new GetNotesOutput { Notes = res });
     }
 
+    [Authorize]
     public Task<GetTagsOutput> GetTags(GetTagsReqInput input)
     {
         var dbServer = new MongoDbServer();
@@ -90,6 +91,7 @@ public class Query
         return Task.FromResult(new GetTagsOutput { Tags = res });
     }
 
+    [Authorize]
     public Task<GetNotesByTagsOutput> GetNotesByTags(GetNotesByTagsReqInput input)
     {
         var dbServer = new MongoDbServer();

@@ -8,13 +8,13 @@ namespace ai_my_personal_notes_api;
 
 public class Mutation
 {
-    public async Task<string> GetToken(
+    public Task<string> GetToken(
         string email,
         string password,
         [Service] IIdentityService identityService
     )
     {
-        return await identityService.Authenticate(email, password);
+        return identityService.Authenticate(email, password);
     }
 
     [Authorize]
