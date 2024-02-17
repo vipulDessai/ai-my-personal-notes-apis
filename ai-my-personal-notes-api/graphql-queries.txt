@@ -1,4 +1,4 @@
-# mutations
+# Mutations
 mutation getTokenMutation {
   token(
     email: "hrleader@example.com", 
@@ -11,10 +11,24 @@ mutation addNote {
     note: {
       inputData: {
         value: "",
-        childInputs: [],
-        tags: []
+        childInputs: [
+          {
+            value: "pakistan military tried rigging the election results, it backfired",
+            childInputs: [
+              {
+                value: "Us is fueling on the implications in pakistan",
+                tags: ["united-states"]
+              }
+            ],
+            tags: ["politics"]
+          }
+          {
+            value: "india is putting sanctions on pakistan"
+            tags: ["india"]
+          }
+        ]
       },
-      tags: ["pakistan", "politics"],
+      tags: ["pakistan", "politics", "united-states", "india"],
       title: "pakistan election - people protest for jailed imran khan",
       date: "2024-02-11T00:00:00"
     }
@@ -23,39 +37,95 @@ mutation addNote {
         name: "pakistan"
       },
       {
+        name: "india"
+      },
+      {
         name: "politics"
-      }
+      },
+      {
+        name: "united-states"
+      },
     ]
   }) {
-    statusCode
-    body
+    message
+  }
+}
+mutation addNote_2 {
+  addNote (input: {
+    note: {
+      tags: ["65d104c0f155ba68a1abef93"],
+      title: "farmers protest turns violent",
+      date: "2024-02-13T00:00:00"
+    }
+    newTags: [
+    ]
+  }) {
+    message
+  }
+}
+
+mutation deleteTags {
+  deleteTags (tags: ["india", "pakistan", "politics", "united-states"]) {
+    message,
+    data {
+      deletedCount
+      isAcknowledged
+    }
+  }
+}
+
+# query
+query getTags {
+  tags(input: {
+    batchSize: 100,
+    tagsIds: [
+      "65d104c0f155ba68a1abef92", # pakistan
+      "65d104c0f155ba68a1abef93", # india
+      "65d104c0f155ba68a1abef94", # politics
+      "65d104c0f155ba68a1abef95", # united-states
+    ]
+  }) {
+    tags {
+      name
+    }
   }
 }
 
 query getNote {
   notes (input: {
     batchSize: 100,
+    # filterKey: "title",
+    # filterValue: "people"
   }) {
-    statusCode
-    body
-  }
-}
-
-# query
-query books {
-  books {
-    id
-    author {
-      name
+    notes {
+      title
+      tags
+      date
+      inputData {
+        value
+        childInputs {
+          value
+          tags
+        }
+      }
     }
-  } 
+  }
+}
+query getNotesByTagIds {
+  notesByTags (input: {
+    batchSize: 100,
+    tagsIds: [
+      "65d104c0f155ba68a1abef93"
+    ]
+  }) {
+    notes {
+      title
+    }
+  }
 }
 
-query author {
-  author(input: {
-    authorId: "5944c03d-0f4d-4be7-8f6c-35cc7103c12f"
-  }) {
-    id
-    name
-  }
+# Explore the nested get all fields in graph ql
+scalar JSON
+type InputData {
+    value: String
 }
