@@ -51,15 +51,18 @@ public class Mutation
                     }
                 }
 
-                void replaceTags(List<string> curTags)
+                void replaceTags(List<string>? curTags)
                 {
-                    foreach (var t in tagsIdsRes)
+                    if (curTags != null)
                     {
-                        for (int i = 0; i < curTags.Count; i++)
+                        foreach (var t in tagsIdsRes)
                         {
-                            if (curTags[i] == t.Name)
+                            for (int i = 0; i < curTags.Count; i++)
                             {
-                                curTags[i] = t.Id.ToString();
+                                if (curTags[i] == t.Name)
+                                {
+                                    curTags[i] = t.Id.ToString();
+                                }
                             }
                         }
                     }
@@ -67,14 +70,17 @@ public class Mutation
 
                 replaceTags(note.Tags);
 
-                void recursivelyReplaceTagsWithIds(NoteInputs[] curNoteInputs)
+                void recursivelyReplaceTagsWithIds(NoteInputs[]? curNoteInputs)
                 {
+                    if (curNoteInputs == null)
+                        return;
+
                     for (int i = 0; i < curNoteInputs.Length; ++i)
                     {
                         var curNoteInput = curNoteInputs[i];
                         replaceTags(curNoteInput.Tags);
 
-                        if (curNoteInput.ChildInputs.Length > 0)
+                        if (curNoteInput.ChildInputs != null && curNoteInput.ChildInputs.Length > 0)
                         {
                             recursivelyReplaceTagsWithIds(curNoteInput.ChildInputs);
                         }
@@ -102,6 +108,6 @@ public class Mutation
         var filter = Builders<NoteTags>.Filter.In("name", tags);
         var res = await tagsCollection.DeleteManyAsync(filter);
 
-        return new DeleteTagOutput { Data = res, Message = "Delete operation completed", };
+        return new DeleteTagOutput { Data = res, Message = "Delete operation completed" };
     }
 }
