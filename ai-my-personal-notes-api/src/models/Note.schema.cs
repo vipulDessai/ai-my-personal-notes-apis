@@ -31,6 +31,9 @@ public class NoteSchema
     [BsonElement("date")]
     public DateTime Date { get; set; }
 
+    [BsonElement("updated_date")]
+    public DateTime? UpdatedDate { get; set; }
+
     [BsonElement("input_data")]
     public NoteInputs[]? InputData { get; set; }
 }
@@ -45,11 +48,14 @@ public class NoteTags
     public string? Name { get; set; }
 }
 
-public record AddNotesReqInput(NoteSchema Note, NoteTags[] NewTags);
+public record UpdateNotesReqInput(NoteSchema Note, NoteTags[] NewTags, string? NoteId);
 
-public class AddNoteOutput
+public class UpdateNoteOutput
 {
     public string Message { get; set; } = "Note adding failed";
+
+    // TODO: figure out why cant the UpdateResult be enabled, this throws schema error
+    // public UpdateResult? Data { get; set; }
 }
 
 public record GetNotesReqInput(int BatchSize, string? FilterKey, string? FilterValue);
@@ -77,4 +83,12 @@ public record GetNotesByTagsReqInput(int BatchSize, string[]? TagsIds);
 public class GetNotesByTagsOutput
 {
     public List<NoteSchema> notes { get; set; } = new List<NoteSchema>();
+}
+
+public record DeleteNotesReqInput(List<string>? NotesIds, List<string>? TagsIds);
+
+public class DeleteNotesOutput
+{
+    public string Message { get; set; } = "notes deleted successfully";
+    public DeleteResult? Data { get; set; }
 }

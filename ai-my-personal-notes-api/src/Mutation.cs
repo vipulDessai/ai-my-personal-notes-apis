@@ -2,6 +2,7 @@
 using ai_my_personal_notes_api.services;
 using GraphQLAuthDemo;
 using HotChocolate.Authorization;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace ai_my_personal_notes_api;
@@ -18,16 +19,16 @@ public class Mutation
     }
 
     [Authorize]
-    public async Task<AddNoteOutput> AddNote(
+    public async Task<UpdateNoteOutput> UpdateNote(
         [GlobalState("currentUser")] CurrentUser user,
-        AddNotesReqInput input
+        UpdateNotesReqInput input
     )
     {
         var dbServer = new MongoDbServer();
         var db = dbServer.client.GetDatabase("db");
         var globalCollection = db.GetCollection<NoteSchema>("collection");
 
-        var (note, newTags) = input;
+        var (note, newTags, NoteId) = input;
         if (newTags.Length > 0)
         {
             var tagsCollection = db.GetCollection<NoteTags>("tags");
@@ -91,9 +92,24 @@ public class Mutation
             }
         }
 
-        await globalCollection.InsertOneAsync(note);
+        if (string.IsNullOrEmpty(NoteId))
+        {
+            await globalCollection.InsertOneAsync(note);
 
-        return new AddNoteOutput { Message = "Note Inserted" };
+            return new UpdateNoteOutput { Message = "Note Inserted" };
+        }
+        else
+        {
+            var filter = Builders<NoteSchema>.Filter.Eq("_id", ObjectId.Parse(NoteId));
+            var update = Builders<NoteSchema>
+                .Update.Set("input_data", note.InputData)
+                .Set("updated_date", note.UpdatedDate)
+                .Set("tags", note.Tags)
+                .Set("title", note.Title);
+
+            var res = await globalCollection.UpdateOneAsync(filter, update);
+            return new UpdateNoteOutput { Message = "Note Updated" };
+        }
     }
 
     [Authorize]
@@ -109,5 +125,35 @@ public class Mutation
         var res = await tagsCollection.DeleteManyAsync(filter);
 
         return new DeleteTagOutput { Data = res, Message = "Delete operation completed" };
+    }
+
+    [Authorize]
+    public async Task<DeleteNotesOutput> DeleteNotes(
+        [GlobalState("currentUser")] CurrentUser user,
+        DeleteNotesReqInput input
+    )
+    {
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("db");
+        var globalCollection = db.GetCollection<NoteSchema>("collection");
+
+        var (NotesIds, TagsIds) = input;
+
+        FilterDefinition<NoteSchema> filter;
+        if (NotesIds != null && NotesIds.Count > 0)
+        {
+            filter = Builders<NoteSchema>.Filter.In(
+                "_id",
+                NotesIds.Select(noteId => ObjectId.Parse(noteId))
+            );
+        }
+        else
+        {
+            filter = Builders<NoteSchema>.Filter.In("tags", TagsIds);
+        }
+
+        var res = await globalCollection.DeleteManyAsync(filter);
+
+        return new DeleteNotesOutput { Data = res, Message = "Delete operation completed" };
     }
 }
