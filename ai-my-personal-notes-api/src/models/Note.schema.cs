@@ -62,14 +62,15 @@ public record GetNotesReqInput(int BatchSize, string? FilterKey, string? FilterV
 
 public class GetNotesOutput
 {
-    public List<NoteSchema> Notes { get; set; } = new List<NoteSchema>();
+    public Dictionary<string, NoteSchema> Notes { get; set; } =
+        new Dictionary<string, NoteSchema>();
 }
 
 public record GetTagsReqInput(int BatchSize, string[]? TagsIds, string[]? TagsName);
 
 public class GetTagsOutput
 {
-    public List<NoteTags> Tags { get; set; } = new List<NoteTags>();
+    public Dictionary<string, NoteTags> Tags { get; set; } = new();
 }
 
 public class DeleteTagOutput
@@ -82,7 +83,7 @@ public record GetNotesByTagsReqInput(int BatchSize, string[]? TagsIds);
 
 public class GetNotesByTagsOutput
 {
-    public List<NoteSchema> notes { get; set; } = new List<NoteSchema>();
+    public Dictionary<string, NoteSchema> notes { get; set; } = new();
 }
 
 public record DeleteNotesReqInput(List<string>? NotesIds, List<string>? TagsIds);

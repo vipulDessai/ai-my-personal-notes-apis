@@ -35,7 +35,7 @@ public class Query
         }
         var findOptions = new FindOptions { BatchSize = BatchSize };
 
-        var res = new List<NoteSchema>();
+        var res = new Dictionary<string, NoteSchema>();
         using (var cursor = _globalCollection.Find(filter, findOptions).ToCursor())
         {
             if (cursor.MoveNext())
@@ -44,7 +44,7 @@ public class Query
 
                 for (int i = 0; i < d.Count; i++)
                 {
-                    res.Add(d[i]);
+                    res[d[i].Id.ToString()] = d[i];
                 }
             }
         }
@@ -66,15 +66,19 @@ public class Query
         {
             filter = Builders<NoteTags>.Filter.In(
                 "_id",
-                TagsIds.Select(tag => ObjectId.Parse(tag))
+                TagsIds.Select(tagIds => ObjectId.Parse(tagIds))
             );
         }
-        else
+        else if (TagsName != null && TagsName.Length > 0)
         {
             filter = Builders<NoteTags>.Filter.In("name", TagsName);
         }
+        else
+        {
+            filter = Builders<NoteTags>.Filter.Empty;
+        }
 
-        var res = new List<NoteTags>();
+        var res = new Dictionary<string, NoteTags>();
         using (var cursor = tagsCollection.Find(filter, findOptions).ToCursor())
         {
             if (cursor.MoveNext())
@@ -83,7 +87,7 @@ public class Query
 
                 for (int i = 0; i < d.Count; i++)
                 {
-                    res.Add(d[i]);
+                    res[d[i].Id.ToString()] = d[i];
                 }
             }
         }
@@ -102,7 +106,7 @@ public class Query
         FilterDefinition<NoteSchema> filter = Builders<NoteSchema>.Filter.In("tags", TagsIds);
         var findOptions = new FindOptions { BatchSize = BatchSize };
 
-        List<NoteSchema> notes = new List<NoteSchema>();
+        var notes = new Dictionary<string, NoteSchema>();
         using (var cursor = _globalCollection.Find(filter, findOptions).ToCursor())
         {
             if (cursor.MoveNext())
@@ -111,7 +115,7 @@ public class Query
 
                 for (int i = 0; i < d.Count; i++)
                 {
-                    notes.Add(d[i]);
+                    notes[d[i].Id.ToString()] = d[i];
                 }
             }
         }
