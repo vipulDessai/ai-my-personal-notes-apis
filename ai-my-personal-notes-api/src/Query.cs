@@ -1,52 +1,15 @@
-﻿using System.Net;
-using System.Text.Json;
-using ai_my_personal_notes_api.Models;
+﻿using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
-using Amazon.Lambda.APIGatewayEvents;
 using HotChocolate.Authorization;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace ai_my_personal_notes_api;
 
 public class Query
 {
-    public async Task<APIGatewayProxyResponse> GetRestuarants(
-        [GlobalState("currentUser")] CurrentUser user,
-        GetRestuarantsInput input
-    )
-    {
-        var dbServer = new MongoDbServer();
-        var db = dbServer.client.GetDatabase("sample_restaurants");
-        var globalCollection = db.GetCollection<NoteSchema>("collection");
-        var _restaurantsCollection = db.GetCollection<Restaurant>("restaurants");
-        var filter = Builders<Restaurant>.Filter.Eq(input.FilterKey, input.FilterValue);
-        var findOptions = new FindOptions { BatchSize = input.BatchSize };
-
-        var res = new List<string>();
-        using (var cursor = _restaurantsCollection.Find(filter, findOptions).ToCursor())
-        {
-            if (cursor.MoveNext())
-            {
-                var d = cursor.Current.ToList();
-
-                for (int i = 0; i < d.Count; i++)
-                {
-                    res.Add(d[i].Name);
-                }
-            }
-        }
-
-        var response = new APIGatewayProxyResponse
-        {
-            StatusCode = (int)HttpStatusCode.OK,
-            Body = JsonSerializer.Serialize(res.ToArray()),
-            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-        };
-
-        return response;
-    }
-
-    public async Task<APIGatewayProxyResponse> GetNotes(
+    [Authorize]
+    public Task<GetNotesOutput> GetNotes(
         [GlobalState("currentUser")] CurrentUser user,
         GetNotesReqInput input
     )
@@ -64,11 +27,15 @@ public class Query
         }
         else
         {
-            filter = Builders<NoteSchema>.Filter.Eq(FilterKey, FilterValue);
+            // mongoDb contains query
+            filter = Builders<NoteSchema>.Filter.Regex(
+                FilterKey,
+                new BsonRegularExpression(FilterValue, "i")
+            );
         }
         var findOptions = new FindOptions { BatchSize = BatchSize };
 
-        var res = new List<NoteSchema>();
+        var res = new Dictionary<string, NoteSchema>();
         using (var cursor = _globalCollection.Find(filter, findOptions).ToCursor())
         {
             if (cursor.MoveNext())
@@ -77,62 +44,82 @@ public class Query
 
                 for (int i = 0; i < d.Count; i++)
                 {
-                    res.Add(d[i]);
+                    res[d[i].Id.ToString()] = d[i];
                 }
             }
         }
 
-        var response = new APIGatewayProxyResponse
+        return Task.FromResult(new GetNotesOutput { Notes = res });
+    }
+
+    [Authorize]
+    public Task<GetTagsOutput> GetTags(GetTagsReqInput input)
+    {
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("db");
+        var tagsCollection = db.GetCollection<NoteTags>("tags");
+
+        var (BatchSize, TagsIds, TagsName) = input;
+        var findOptions = new FindOptions { BatchSize = BatchSize };
+        FilterDefinition<NoteTags> filter;
+        if (TagsIds != null && TagsIds.Length > 0)
         {
-            StatusCode = (int)HttpStatusCode.OK,
-            Body = JsonSerializer.Serialize(res.ToArray()),
-            Headers = new Dictionary<string, string> { { "Content-Type", "text/plain" } }
-        };
+            filter = Builders<NoteTags>.Filter.In(
+                "_id",
+                TagsIds.Select(tagIds => ObjectId.Parse(tagIds))
+            );
+        }
+        else if (TagsName != null && TagsName.Length > 0)
+        {
+            filter = Builders<NoteTags>.Filter.In("name", TagsName);
+        }
+        else
+        {
+            filter = Builders<NoteTags>.Filter.Empty;
+        }
 
-        return response;
+        var res = new Dictionary<string, NoteTags>();
+        using (var cursor = tagsCollection.Find(filter, findOptions).ToCursor())
+        {
+            if (cursor.MoveNext())
+            {
+                var d = cursor.Current.ToList();
+
+                for (int i = 0; i < d.Count; i++)
+                {
+                    res[d[i].Id.ToString()] = d[i];
+                }
+            }
+        }
+
+        return Task.FromResult(new GetTagsOutput { Tags = res });
     }
 
-    public string Unauthorized()
+    [Authorize]
+    public Task<GetNotesByTagsOutput> GetNotesByTags(GetNotesByTagsReqInput input)
     {
-        return "unauthorized";
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("db");
+        var _globalCollection = db.GetCollection<NoteSchema>("collection");
+
+        var (BatchSize, TagsIds) = input;
+        FilterDefinition<NoteSchema> filter = Builders<NoteSchema>.Filter.In("tags", TagsIds);
+        var findOptions = new FindOptions { BatchSize = BatchSize };
+
+        var notes = new Dictionary<string, NoteSchema>();
+        using (var cursor = _globalCollection.Find(filter, findOptions).ToCursor())
+        {
+            if (cursor.MoveNext())
+            {
+                var d = cursor.Current.ToList();
+
+                for (int i = 0; i < d.Count; i++)
+                {
+                    notes[d[i].Id.ToString()] = d[i];
+                }
+            }
+        }
+
+        return Task.FromResult(new GetNotesByTagsOutput { notes = notes });
     }
-
-    [Authorize(Policy = "hr")]
-    public List<string> Authorized([Service] IHttpContextAccessor contextAccessor)
-    {
-        var res = contextAccessor
-            .HttpContext.User.Claims.Select(x => $"{x.Type} : {x.Value}")
-            .ToList();
-
-        return res;
-    }
-
-    [Authorize(Policy = "hr")]
-    public List<string> AuthorizedBetterWay([GlobalState("currentUser")] CurrentUser user)
-    {
-        return user.Claims;
-    }
-
-    [Authorize(Roles = new[] { "leader" })]
-    public List<string> AuthorizedLeader([GlobalState("currentUser")] CurrentUser user)
-    {
-        return user.Claims;
-    }
-
-    [Authorize(Roles = new[] { "dev" })]
-    public List<string> AuthorizedDev([GlobalState("currentUser")] CurrentUser user)
-    {
-        return user.Claims;
-    }
-
-    [Authorize(Policy = "DevDepartment")]
-    public List<string> AuthorizedDevDepartment([GlobalState("currentUser")] CurrentUser user)
-    {
-        return user.Claims;
-    }
-
-    public Task<List<Book>> GetBooks([Service] Repository repository) => repository.GetBooksAsync();
-
-    public Task<Author?> GetAuthor(GetAuthorInput input, [Service] Repository r) =>
-        r.GetAuthor(input.authorId);
 }
