@@ -1,4 +1,5 @@
-﻿using ai_my_personal_notes_api.Models;
+﻿using ai_my_personal_notes_api.Common;
+using ai_my_personal_notes_api.Models;
 using ai_my_personal_notes_api.services;
 using GraphQLAuthDemo;
 using HotChocolate.Authorization;
@@ -155,5 +156,46 @@ public class Mutation
         var res = await globalCollection.DeleteManyAsync(filter);
 
         return new DeleteNotesOutput { Data = res, Message = "Delete operation completed" };
+    }
+
+    [Authorize]
+    public async Task<UpdateTagsOutput> UpdateTags(
+        [GlobalState("currentUser")] CurrentUser user,
+        UpdateTagsReqInput input
+    )
+    {
+        var dbServer = new MongoDbServer();
+        var db = dbServer.client.GetDatabase("db");
+        var globalCollection = db.GetCollection<NoteTags>(AppConstants.DB_NAMES["TAGS_DB"]);
+
+        var (updateTagsData, newTags) = input;
+
+        if (updateTagsData != null)
+        {
+            var res = new List<UpdateNoteTagOpResult>();
+            foreach (var (tagId, newTagValue) in updateTagsData)
+            {
+                var filter = Builders<NoteTags>.Filter.Eq("_id", ObjectId.Parse(tagId));
+                var update = Builders<NoteTags>.Update.Set("name", newTagValue);
+
+                var updateOpResult = await globalCollection.UpdateOneAsync(filter, update);
+
+                res.Add(
+                    new UpdateNoteTagOpResult()
+                    {
+                        MatchedCount = updateOpResult.MatchedCount,
+                        ModifiedCount = updateOpResult.ModifiedCount
+                    }
+                );
+            }
+
+            return new UpdateTagsOutput { Message = "update tags operation completed", Data = res };
+        }
+        else
+        {
+            await globalCollection.InsertManyAsync(newTags);
+
+            return new UpdateTagsOutput { Message = "add tags operation completed" };
+        }
     }
 }

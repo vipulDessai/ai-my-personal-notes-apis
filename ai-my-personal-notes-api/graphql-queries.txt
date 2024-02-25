@@ -6,8 +6,8 @@ mutation getTokenMutation {
   )
 }
 
-mutation addNote {
-  addNote (input: {
+mutation add_note {
+  updateNote (input: {
     note: {
       inputData: {
         value: "",
@@ -50,15 +50,28 @@ mutation addNote {
     message
   }
 }
-mutation addNote_2 {
-  addNote (input: {
+mutation add_note_india_politics {
+  updateNote (input: {
     note: {
       tags: ["65d104c0f155ba68a1abef93"],
       title: "farmers protest turns violent",
       date: "2024-02-13T00:00:00"
     }
-    newTags: [
-    ]
+    newTags: []
+  }) {
+    message
+  }
+}
+mutation update_note_india_politics {
+  updateNote (input: {
+    noteId: "65da421bfc087bb42910b954",
+    note: {
+      tags: ["65d104c0f155ba68a1abef93"],
+      title: "farmers protest turns violent, police used tear gas",
+      date: "2024-02-13T00:00:00"
+      updatedDate: "2024-02-24T00:00:00"
+    }
+    newTags: []
   }) {
     message
   }
@@ -74,19 +87,55 @@ mutation deleteTags {
   }
 }
 
+mutation updateTags {
+  updateTags(input: {
+    updateTagsData: {
+      key: "65dba687881a9c441cb2e818",
+      value: "foo"
+    }
+    # newTags: [
+    #   {
+    #     name: "foo"
+    #   }
+    # ]
+  }) {
+    message
+    data {
+      matchedCount
+      modifiedCount
+    }
+  }
+}
+
+mutation deleteNote {
+  deleteNotes(input: {
+    # notesIds: ["65da33622a21eadbf59b3793"]
+    tagsIds: ["65da3a682a21eadbf59b3799"]
+  }) {
+    message,
+    data {
+      deletedCount
+      isAcknowledged
+    }
+  }
+}
+
 # query
 query getTags {
   tags(input: {
-    batchSize: 100,
-    tagsIds: [
-      "65d104c0f155ba68a1abef92", # pakistan
-      "65d104c0f155ba68a1abef93", # india
-      "65d104c0f155ba68a1abef94", # politics
-      "65d104c0f155ba68a1abef95", # united-states
-    ]
+    batchSize: 2,
+    # tagsIds: [
+    #   "65d104c0f155ba68a1abef92", # pakistan
+    #   "65d104c0f155ba68a1abef93", # india
+    #   "65d104c0f155ba68a1abef94", # politics
+    #   "65d104c0f155ba68a1abef95", # united-states
+    # ]
   }) {
     tags {
-      name
+      key
+      value {
+        name
+      }
     }
   }
 }
@@ -94,18 +143,16 @@ query getTags {
 query getNote {
   notes (input: {
     batchSize: 100,
-    # filterKey: "title",
-    # filterValue: "people"
+    filterKey: "title",
+    filterValue: "farmers"
   }) {
     notes {
-      title
-      tags
-      date
-      inputData {
-        value
-        childInputs {
+      key
+      value {
+        title
+        tags
+        inputData {
           value
-          tags
         }
       }
     }
@@ -119,7 +166,25 @@ query getNotesByTagIds {
     ]
   }) {
     notes {
-      title
+      key
+      value {
+        title
+        inputData {
+          value
+          childInputs {
+            value
+            childInputs {
+              value
+              childInputs {
+                value
+                childInputs {
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

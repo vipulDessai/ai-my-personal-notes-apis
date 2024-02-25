@@ -93,3 +93,22 @@ public class DeleteNotesOutput
     public string Message { get; set; } = "notes deleted successfully";
     public DeleteResult? Data { get; set; }
 }
+
+public record UpdateTagsReqInput(
+    Dictionary<string, string>? updateTagsData,
+    List<NoteTags>? newTags
+);
+
+public class UpdateNoteTagOpResult
+{
+    public long MatchedCount { get; set; }
+    public long ModifiedCount { get; set; }
+}
+
+public class UpdateTagsOutput
+{
+    public string Message { get; set; } = "notes deleted successfully";
+
+    // TODO: figure out why cant the UpdateResult be enabled, this throws schema error
+    public List<UpdateNoteTagOpResult>? Data { get; set; }
+}
