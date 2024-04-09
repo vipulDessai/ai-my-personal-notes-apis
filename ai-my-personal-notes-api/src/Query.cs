@@ -18,7 +18,7 @@ public class Query
         var db = dbServer.client.GetDatabase("db");
         var _globalCollection = db.GetCollection<NoteSchema>("collection");
 
-        var (BatchSize, FilterKey, FilterValue) = input;
+        var (BatchSize, Page, FilterKey, FilterValue) = input;
 
         FilterDefinition<NoteSchema> filter;
         if (string.IsNullOrEmpty(FilterKey))
@@ -36,11 +36,13 @@ public class Query
         var findOptions = new FindOptions { BatchSize = BatchSize };
 
         var res = new Dictionary<string, NoteSchema>();
-        using (var cursor = _globalCollection.Find(filter, findOptions).ToCursor())
+        using (
+            var c = _globalCollection.Find(filter, findOptions).Skip(BatchSize * Page).ToCursor()
+        )
         {
-            if (cursor.MoveNext())
+            if (c.MoveNext())
             {
-                var d = cursor.Current.ToList();
+                var d = c.Current.ToList();
 
                 for (int i = 0; i < d.Count; i++)
                 {
@@ -59,7 +61,7 @@ public class Query
         var db = dbServer.client.GetDatabase("db");
         var tagsCollection = db.GetCollection<NoteTags>("tags");
 
-        var (BatchSize, TagsIds, TagsName) = input;
+        var (BatchSize, Page, TagsIds, TagsName) = input;
         var findOptions = new FindOptions { BatchSize = BatchSize };
         FilterDefinition<NoteTags> filter;
         if (TagsIds != null && TagsIds.Length > 0)
@@ -79,7 +81,9 @@ public class Query
         }
 
         var res = new Dictionary<string, NoteTags>();
-        using (var cursor = tagsCollection.Find(filter, findOptions).ToCursor())
+        using (
+            var cursor = tagsCollection.Find(filter, findOptions).Skip(BatchSize * Page).ToCursor()
+        )
         {
             if (cursor.MoveNext())
             {
@@ -102,12 +106,17 @@ public class Query
         var db = dbServer.client.GetDatabase("db");
         var _globalCollection = db.GetCollection<NoteSchema>("collection");
 
-        var (BatchSize, TagsIds) = input;
+        var (BatchSize, Page, TagsIds) = input;
         FilterDefinition<NoteSchema> filter = Builders<NoteSchema>.Filter.In("tags", TagsIds);
         var findOptions = new FindOptions { BatchSize = BatchSize };
 
         var notes = new Dictionary<string, NoteSchema>();
-        using (var cursor = _globalCollection.Find(filter, findOptions).ToCursor())
+        using (
+            var cursor = _globalCollection
+                .Find(filter, findOptions)
+                .Skip(BatchSize * Page)
+                .ToCursor()
+        )
         {
             if (cursor.MoveNext())
             {

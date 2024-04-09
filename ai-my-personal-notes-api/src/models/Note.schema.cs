@@ -58,7 +58,7 @@ public class UpdateNoteOutput
     // public UpdateResult? Data { get; set; }
 }
 
-public record GetNotesReqInput(int BatchSize, string? FilterKey, string? FilterValue);
+public record GetNotesReqInput(int BatchSize, int Page, string? FilterKey, string? FilterValue);
 
 public class GetNotesOutput
 {
@@ -66,7 +66,7 @@ public class GetNotesOutput
         new Dictionary<string, NoteSchema>();
 }
 
-public record GetTagsReqInput(int BatchSize, string[]? TagsIds, string[]? TagsName);
+public record GetTagsReqInput(int BatchSize, int Page, string[]? TagsIds, string[]? TagsName);
 
 public class GetTagsOutput
 {
@@ -79,7 +79,7 @@ public class DeleteTagOutput
     public DeleteResult? Data { get; set; }
 }
 
-public record GetNotesByTagsReqInput(int BatchSize, string[]? TagsIds);
+public record GetNotesByTagsReqInput(int BatchSize, int Page, string[]? TagsIds);
 
 public class GetNotesByTagsOutput
 {
