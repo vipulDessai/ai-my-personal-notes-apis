@@ -369,5 +369,4 @@ launchSettings.json
 # misc
 .config
 .serverless
-# TODO - ignore the folder later
-# dist
+dist
