@@ -91,18 +91,20 @@ jobs:
     - run: dotnet tool install amazon.lambda.tools
 
     # zip the dotnet files
-    - run: dotnet lambda package -o dist/ai-my-personal-notes-api.zip
+    - name: Zip the dotnet lambda project
+      working-directory: ./ai-my-personal-notes-api
+      run: dotnet lambda package -o dist/ai-my-personal-notes-api.zip
 
     # Create the app package by building and packaging the Windows Application Packaging project
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         
     - name: serverless deploy
       uses: serverless/github-action@v3
       with:
-        args: deploy
+        args: -c "cd ./ai-my-personal-notes-api && serverless deploy"
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
