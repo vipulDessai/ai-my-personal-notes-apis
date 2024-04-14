@@ -4,7 +4,11 @@
   "description": "``` https://localhost:62926/graphql/ ``` ## sample query ``` # mutation mutation addAuthor {   addAuthor(input: {name: \"Schiller\"}) {     record {       id       name     }   } }",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "serverless deploy"
+  },
+  "dependencies": {
+    "serverless": "^3.38.0"
   },
   "keywords": [],
   "author": "",
