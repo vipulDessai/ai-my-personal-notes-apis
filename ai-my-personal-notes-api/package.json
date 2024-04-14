@@ -4,8 +4,7 @@
   "description": "``` https://localhost:62926/graphql/ ``` ## sample query ``` # mutation mutation addAuthor {   addAuthor(input: {name: \"Schiller\"}) {     record {       id       name     }   } }",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "serverless config credentials --provider aws -o --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }} && serverless deploy --stage dev"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "serverless": "^3.38.0"
