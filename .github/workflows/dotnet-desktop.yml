@@ -108,6 +108,10 @@ jobs:
     - name: Serverless config
       working-directory: ./ai-my-personal-notes-api
       run: node ./node_modules/serverless/bin/serverless.js config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY_ID }} --secret ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        SLS_DEBUG: 1
 
     - name: Serverless deploy
       working-directory: ./ai-my-personal-notes-api
