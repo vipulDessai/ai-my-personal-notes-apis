@@ -66,7 +66,7 @@ public class GetNotesOutput
         new Dictionary<string, NoteSchema>();
 }
 
-public record GetTagsReqInput(int BatchSize, int Page, string[]? TagsIds, string[]? TagsName);
+public record GetTagsReqInput(int? BatchSize, int? Page, string[]? TagsIds, string[]? TagsName);
 
 public class GetTagsOutput
 {

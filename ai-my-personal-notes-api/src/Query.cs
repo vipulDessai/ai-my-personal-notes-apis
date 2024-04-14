@@ -62,10 +62,11 @@ public class Query
         var tagsCollection = db.GetCollection<NoteTags>("tags");
 
         var (BatchSize, Page, TagsIds, TagsName) = input;
-        var findOptions = new FindOptions { BatchSize = BatchSize };
         FilterDefinition<NoteTags> filter;
         if (TagsIds != null && TagsIds.Length > 0)
         {
+            BatchSize = 0;
+            Page = 0;
             filter = Builders<NoteTags>.Filter.In(
                 "_id",
                 TagsIds.Select(tagIds => ObjectId.Parse(tagIds))
@@ -73,6 +74,8 @@ public class Query
         }
         else if (TagsName != null && TagsName.Length > 0)
         {
+            BatchSize = 0;
+            Page = 0;
             filter = Builders<NoteTags>.Filter.In("name", TagsName);
         }
         else
@@ -81,6 +84,7 @@ public class Query
         }
 
         var res = new Dictionary<string, NoteTags>();
+        var findOptions = new FindOptions { BatchSize = BatchSize };
         using (
             var cursor = tagsCollection.Find(filter, findOptions).Skip(BatchSize * Page).ToCursor()
         )
