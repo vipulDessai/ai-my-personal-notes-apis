@@ -79,8 +79,6 @@ public class DeleteTagOutput
     public DeleteResult? Data { get; set; }
 }
 
-public record GetNotesByTagsReqInput(int BatchSize, int Page, string[]? TagsIds);
-
 public class GetNotesByTagsOutput
 {
     public Dictionary<string, NoteSchema> notes { get; set; } = new();

@@ -104,23 +104,15 @@ public class Query
     }
 
     [Authorize]
-    public Task<GetNotesByTagsOutput> GetNotesByTags(GetNotesByTagsReqInput input)
+    public Task<GetNotesByTagsOutput> GetNotesByTags(List<string> TagsIds)
     {
         var dbServer = new MongoDbServer();
         var db = dbServer.client.GetDatabase("db");
         var _globalCollection = db.GetCollection<NoteSchema>("collection");
 
-        var (BatchSize, Page, TagsIds) = input;
         FilterDefinition<NoteSchema> filter = Builders<NoteSchema>.Filter.In("tags", TagsIds);
-        var findOptions = new FindOptions { BatchSize = BatchSize };
-
         var notes = new Dictionary<string, NoteSchema>();
-        using (
-            var cursor = _globalCollection
-                .Find(filter, findOptions)
-                .Skip(BatchSize * Page)
-                .ToCursor()
-        )
+        using (var cursor = _globalCollection.Find(filter).ToCursor())
         {
             if (cursor.MoveNext())
             {
