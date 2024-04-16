@@ -15,8 +15,8 @@ namespace GraphQLAuthDemo
     {
         public Task<string> Authenticate(string email, string password)
         {
-            //Your custom logic here (e.g. database query)
-            //Mocked for a sake of simplicity
+            // Your custom logic here (e.g. database query)
+            // Mocked for a sake of simplicity
             var roles = new List<string>();
 
             if (email.Contains("hr"))
