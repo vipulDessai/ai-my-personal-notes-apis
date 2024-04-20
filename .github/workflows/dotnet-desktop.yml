@@ -113,6 +113,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         SLS_DEBUG: 1
 
+    # TODO: seperate out stages for all 3 envs (prod, master, preview)
+    # refer - https://stackoverflow.com/questions/63117454/how-to-set-workflow-env-variables-depending-on-branch
     - name: Serverless deploy
       working-directory: ./ai-my-personal-notes-api
       run: node ./node_modules/serverless/bin/serverless.js deploy --stage dev

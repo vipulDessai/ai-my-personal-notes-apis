@@ -1,6 +1,5 @@
 # TODO
-- note schema 
-    - update tag api
+- add notes -> child input with date input should be of DateTime type
 - Authenticate and authorize the graph ql query/mutation using hot choclate - <b style="color: green">DONE</b>
     - [authentication tutorial](https://medium.com/@marcinjaniak/graphql-simple-authorization-and-authentication-with-hotchocolate-11-and-asp-net-core-3-162e0a35743d)
 - enable cors - currently enabled from API server directly - <b style="color: green">DONE</b>

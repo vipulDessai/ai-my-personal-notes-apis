@@ -18,10 +18,14 @@ public class Query
         var db = dbServer.client.GetDatabase("db");
         var _globalCollection = db.GetCollection<NoteSchema>("collection");
 
-        var (BatchSize, Page, FilterKey, FilterValue) = input;
+        var (BatchSize, Page, FilterKey, FilterValue, TagsIds) = input;
 
         FilterDefinition<NoteSchema> filter;
-        if (string.IsNullOrEmpty(FilterKey))
+        if (TagsIds != null && TagsIds.Length > 0)
+        {
+            filter = Builders<NoteSchema>.Filter.In("tags", TagsIds);
+        }
+        else if (string.IsNullOrEmpty(FilterKey))
         {
             filter = Builders<NoteSchema>.Filter.Empty;
         }
@@ -33,8 +37,8 @@ public class Query
                 new BsonRegularExpression(FilterValue, "i")
             );
         }
-        var findOptions = new FindOptions { BatchSize = BatchSize };
 
+        var findOptions = new FindOptions { BatchSize = BatchSize };
         var res = new Dictionary<string, NoteSchema>();
         using (
             var c = _globalCollection.Find(filter, findOptions).Skip(BatchSize * Page).ToCursor()
@@ -62,10 +66,11 @@ public class Query
         var tagsCollection = db.GetCollection<NoteTags>("tags");
 
         var (BatchSize, Page, TagsIds, TagsName) = input;
-        var findOptions = new FindOptions { BatchSize = BatchSize };
         FilterDefinition<NoteTags> filter;
         if (TagsIds != null && TagsIds.Length > 0)
         {
+            BatchSize = 0;
+            Page = 0;
             filter = Builders<NoteTags>.Filter.In(
                 "_id",
                 TagsIds.Select(tagIds => ObjectId.Parse(tagIds))
@@ -73,6 +78,8 @@ public class Query
         }
         else if (TagsName != null && TagsName.Length > 0)
         {
+            BatchSize = 0;
+            Page = 0;
             filter = Builders<NoteTags>.Filter.In("name", TagsName);
         }
         else
@@ -81,6 +88,7 @@ public class Query
         }
 
         var res = new Dictionary<string, NoteTags>();
+        var findOptions = new FindOptions { BatchSize = BatchSize };
         using (
             var cursor = tagsCollection.Find(filter, findOptions).Skip(BatchSize * Page).ToCursor()
         )
@@ -97,38 +105,5 @@ public class Query
         }
 
         return Task.FromResult(new GetTagsOutput { Tags = res });
-    }
-
-    [Authorize]
-    public Task<GetNotesByTagsOutput> GetNotesByTags(GetNotesByTagsReqInput input)
-    {
-        var dbServer = new MongoDbServer();
-        var db = dbServer.client.GetDatabase("db");
-        var _globalCollection = db.GetCollection<NoteSchema>("collection");
-
-        var (BatchSize, Page, TagsIds) = input;
-        FilterDefinition<NoteSchema> filter = Builders<NoteSchema>.Filter.In("tags", TagsIds);
-        var findOptions = new FindOptions { BatchSize = BatchSize };
-
-        var notes = new Dictionary<string, NoteSchema>();
-        using (
-            var cursor = _globalCollection
-                .Find(filter, findOptions)
-                .Skip(BatchSize * Page)
-                .ToCursor()
-        )
-        {
-            if (cursor.MoveNext())
-            {
-                var d = cursor.Current.ToList();
-
-                for (int i = 0; i < d.Count; i++)
-                {
-                    notes[d[i].Id.ToString()] = d[i];
-                }
-            }
-        }
-
-        return Task.FromResult(new GetNotesByTagsOutput { notes = notes });
     }
 }

@@ -14,6 +14,9 @@ public class NoteInputs
 
     [BsonElement("tags")]
     public List<string>? Tags { get; set; }
+
+    [BsonElement("date")]
+    public DateTime? Date { get; set; }
 }
 
 public class NoteSchema
@@ -58,7 +61,13 @@ public class UpdateNoteOutput
     // public UpdateResult? Data { get; set; }
 }
 
-public record GetNotesReqInput(int BatchSize, int Page, string? FilterKey, string? FilterValue);
+public record GetNotesReqInput(
+    int? BatchSize,
+    int? Page,
+    string? FilterKey,
+    string? FilterValue,
+    string[]? TagsIds
+);
 
 public class GetNotesOutput
 {
@@ -66,7 +75,7 @@ public class GetNotesOutput
         new Dictionary<string, NoteSchema>();
 }
 
-public record GetTagsReqInput(int BatchSize, int Page, string[]? TagsIds, string[]? TagsName);
+public record GetTagsReqInput(int? BatchSize, int? Page, string[]? TagsIds, string[]? TagsName);
 
 public class GetTagsOutput
 {
@@ -77,13 +86,6 @@ public class DeleteTagOutput
 {
     public string Message { get; set; } = "Note adding failed";
     public DeleteResult? Data { get; set; }
-}
-
-public record GetNotesByTagsReqInput(int BatchSize, int Page, string[]? TagsIds);
-
-public class GetNotesByTagsOutput
-{
-    public Dictionary<string, NoteSchema> notes { get; set; } = new();
 }
 
 public record DeleteNotesReqInput(List<string>? NotesIds, List<string>? TagsIds);
