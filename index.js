@@ -1,10 +1,18 @@
-const { ApolloServer } = require('apollo-server-lambda');
-const schema = require('./schema');
+const { ApolloServer } = require("apollo-server-lambda");
+const schema = require("./schema");
 
-const server = new ApolloServer({
-  schema,
-  playground: true, 
-  introspection: true,
-});
+const getHandler = (event, context) => {
+  const server = new ApolloServer({
+    schema,
+    playground: true,
+    introspection: true,
+    debug: true,
+  });
+  const graphqlHandler = server.createHandler();
+  if (!event.requestContext) {
+    event.requestContext = context;
+  }
+  return graphqlHandler(event, context);
+};
 
-exports.handler = server.createHandler();
+exports.handler = getHandler;

@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:local": "lambda-local -l index.js -h handler -e event.json"
+    "start:local": "lambda-local -l index.js -h handler -e event.json",
+    "pretty": "prettier --write ./**/* --ignore-unknown",
+    "prettier:watch": "onchange codegen.ts \"./**/*\" -- prettier --write --ignore-unknown {{changed}}"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +20,8 @@
     "graphql-tools": "^9.0.11"
   },
   "devDependencies": {
-    "lambda-local": "^2.2.0"
+    "lambda-local": "^2.2.0",
+    "onchange": "^7.1.0",
+    "prettier": "^3.4.2"
   }
 }

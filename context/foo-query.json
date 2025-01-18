@@ -1,0 +1,8 @@
+{
+  "body": "{ \"query\": \"{ foo }\" }",
+  "httpMethod": "POST",
+  "path": "/graphql",
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}

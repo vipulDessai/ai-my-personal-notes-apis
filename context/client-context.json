@@ -1,0 +1,21 @@
+{
+  "client": {
+    "installation_id": "12345678-1234-1234-1234-123456789012",
+    "app_title": "My Awesome App",
+    "app_version_name": "1.2.3",
+    "app_version_code": "42",
+    "app_package_name": "com.example.myapp"
+  },
+  "custom": {
+    "user_id": "987654321",
+    "plan_type": "premium",
+    "feature_flags": ["new_feature", "beta_tester"]
+  },
+  "env": {
+    "platform": "Android",
+    "platform_version": "13",
+    "make": "Samsung",
+    "model": "Galaxy S23",
+    "locale": "en-US"
+  }
+}

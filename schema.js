@@ -1,5 +1,5 @@
-const { gql } = require('apollo-server-lambda');
-const { makeExecutableSchema } = require('@graphql-tools/schema');
+const { gql } = require("apollo-server-lambda");
+const { makeExecutableSchema } = require("@graphql-tools/schema");
 
 const typeDefs = gql`
   type Query {
@@ -9,8 +9,14 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    foo: () => {
-      return 'Hello, foo world!';
+    foo: async () => {
+      const res = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve("Hello, foo world!");
+        }, 1000);
+      });
+
+      return res;
     },
   },
 };
