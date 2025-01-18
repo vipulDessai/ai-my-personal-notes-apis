@@ -1,3 +1,0 @@
-#!/bin/bash
-
-${LAMBDA_TASK_ROOT}/ai-my-personal-notes-api

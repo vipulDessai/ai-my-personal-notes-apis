@@ -1,0 +1,23 @@
+{
+  "name": "ai-my-personal-notes-apis",
+  "version": "1.0.0",
+  "description": "APIs powered by the ChatGPT AI and Elastic Search",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:local": "lambda-local -l index.js -h handler -e event.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server-lambda": "^3.13.0",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1692.0",
+    "graphql": "^16.10.0",
+    "graphql-tools": "^9.0.11"
+  },
+  "devDependencies": {
+    "lambda-local": "^2.2.0"
+  }
+}
