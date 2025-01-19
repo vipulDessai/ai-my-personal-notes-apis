@@ -13,6 +13,13 @@
 sam init
 ```
 
+### local
+
+```properties
+# PowerShell
+$env:NODE_ENV = "local"
+```
+
 ### Build / Test / Deploy
 
 ```properties

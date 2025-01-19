@@ -1,9 +1,13 @@
 // NPM local lambda library debug single lambda function
 // use `npm run invoke:local`
 // ts-node src/local-lambda.ts
-import { server } from "./server";
+import { ApolloServer } from "apollo-server-lambda";
+
+import { serverConfig } from "./server";
 
 const getHandler = (event: any, context: any, callback: any) => {
+  const server = new ApolloServer(serverConfig);
+
   const graphqlHandler = server.createHandler();
 
   // This is a workaround to make the handler work with the
