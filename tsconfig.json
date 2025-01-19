@@ -18,8 +18,9 @@
     "moduleResolution": "node10",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": false,
+    "outDir": "./build"
   },
-  "include": ["src/**/*"], // Include all files in `src` folder
-  "exclude": ["node_modules"] // Exclude `node_modules` folder
+  "include": ["src/**/*.ts"], // Include all files in `src` folder
+  "exclude": ["node_modules", "**/*.spec.ts"] // Exclude `node_modules` folder
 }
