@@ -43,9 +43,6 @@ sam validate
 sam local invoke (doesnt work)
 sam local start-api --debug
 
-## local debug
-node local-lambda.js
-
 # Test Function in the Cloud:
 sam sync --stack-name {{stack-name}} --watch
 
