@@ -12,7 +12,7 @@ const resolvers = {
     foo: async () => {
       const res = await new Promise((resolve) => {
         setTimeout(() => {
-          resolve("Hello, foo world!");
+          resolve("Hello, foo 2 world!");
         }, 1000);
       });
 

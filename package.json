@@ -10,9 +10,9 @@
     "pretty": "prettier --write ./**/* --ignore-unknown",
     "prettier:watch": "onchange codegen.ts \"./**/*\" -- prettier --write --ignore-unknown {{changed}}",
     "start:local": "nodemon",
-    "build": "tsc",
+    "build": "tsc && sam build",
     "lint": "eslint .",
-    "lint:w": "eslint . --watch"
+    "start:sam:api": "sam build && sam local start-api --debug"
   },
   "keywords": [],
   "author": "",
