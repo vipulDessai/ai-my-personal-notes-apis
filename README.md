@@ -18,6 +18,16 @@ sam init
 ```properties
 # PowerShell
 $env:NODE_ENV = "local"
+
+npm run start:local
+
+# or use local-lambda
+npm run build
+cd ./tests/
+node local-invoke-single-lambda.js
+
+# or start the local SAM API gateway
+npm run start:sam:api
 ```
 
 ### Build / Test / Deploy

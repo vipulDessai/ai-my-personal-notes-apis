@@ -12,7 +12,7 @@
     "start:local": "nodemon",
     "build": "tsc && sam build",
     "lint": "eslint .",
-    "start:sam:api": "sam build && sam local start-api --debug"
+    "start:sam:api": "tsc && sam build && sam local start-api --debug"
   },
   "keywords": [],
   "author": "",
