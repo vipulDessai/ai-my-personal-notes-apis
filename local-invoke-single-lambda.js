@@ -6,7 +6,7 @@ const clientContext = require("./context/client-context.json");
 
 lambdaLocal.execute({
   event,
-  lambdaPath: path.join(__dirname, "index.js"),
+  lambdaPath: path.join(__dirname, "build", "local-lambda.js"),
   profilePath: "~/.aws/credentials",
   profileName: "default",
   timeoutMs: 120000,

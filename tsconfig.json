@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    // In a TypeScript project, the target option in the tsconfig.json file
+    // specifies the version of JavaScript that the TypeScript compiler should output.
+    // This setting determines the language features and syntax that will be used in the generated JavaScript files.
+    // For example, if you set the target to ES5, the TypeScript compiler will generate
+    // JavaScript code that is compatible with ECMAScript 5. If you set it to ES6 or ES2015,
+    // the compiler will use ECMAScript 6 features.
+    "target": "ES2020",
+    "allowJs": true,
+    // Skips type checking of declaration files (*.d.ts). This can speed up compilation, especially in larger projects
+    "skipLibCheck": true,
+    "esModuleInterop": true, // Allow importing CommonJS modules as ES modules
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "CommonJS",
+    "moduleResolution": "node10",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*"], // Include all files in `src` folder
+  "exclude": ["node_modules"] // Exclude `node_modules` folder
+}
